@@ -14,7 +14,7 @@ text = str(input())
 notif = text + ' ' 
 datex_t = re.findall('[0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9]',notif)
 datex_p = re.findall('[0-9][0-9][.][0-9][0-9][.][0-9][0-9][0-9][0-9]',notif)
-timex = re.findall('[0-2][0-3][:][0-5][0-9]', notif)
+timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
 print(datex_t)
 print(datex_p)
 print(timex)
