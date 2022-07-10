@@ -33,9 +33,12 @@ if len(datex_p) or len(datex_t) !=0:
         month_remind = int(string3[1])
         year_remind = int(string3[0])
 
-string_time1 = timex[0]
-time2 = string_time1.split(":")
-print(time2)
+if len(timex) != 0: 
+    string_time1 = timex[0]
+    time2 = string_time1.split(":")
+    print(time2)
+    time = datetime.time(hour=int(time2[0]), minute=int(time2[1]),
+                     second=0, microsecond=0, tzinfo=None, fold=0)
     
 now = str(date.today())
 now1 = now.split("-")
@@ -52,22 +55,26 @@ day_now = int(now2[2])
 month_now = int(now2[1])
 year_now = int(now2[0])
 
-time = datetime.time(hour=int(time2[0]), minute=int(time2[1]),
-                     second=0, microsecond=0, tzinfo=None, fold=0)
 time_now2 = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
                           second=0, microsecond=0, tzinfo=None, fold=0)
-print(time)
+#print(time)
 print(time_now2)
-if datex_p and datex_t !=0:
+if (len(datex_p) or len(datex_t)) and len(timex) != 0:
     aa = datetime.datetime(year_remind, month_remind, day_remind,
                    int(time2[0]), int(time2[1]), 0, 0)
     bb = datetime.datetime(year_now, month_now, day_now,
                    int(time_now[0]), int(time_now[1]), 0, 0)
-else: 
+elif len(timex) != 0:
     aa = datetime.datetime(year_now, month_now, day_now,
                    int(time2[0]), int(time2[1]), 0, 0)
     bb = datetime.datetime(year_now, month_now, day_now,
                    int(time_now[0]), int(time_now[1]), 0, 0)
+else: 
+    aa = datetime.datetime(year_remind, month_remind, day_remind,
+                           int(time_now[0]), int(time_now[1]), 0, 0)
+    bb = datetime.datetime(year_now, month_now, day_now, 
+                           int(time_now[0]), int(time_now[1]), 0, 0)
+    
 difference_day = aa-bb
 print(difference_day)
 localtime = difference_day 
@@ -87,4 +94,8 @@ elif len(datex_t) == 0 and len(datex_p) == 0 and len(timex) != 0:
     fragement = 'в' + ' ' + string_time1
     print(fragement)
     message = text.replace(fragement, '')
-print(message)
+elif (len(datex_p) or len(datex_t) != 0) and len(timex) ==0:
+    fragement = string1
+    print(fragement)
+    message = text.replace(fragement, '')
+print("Напоминаю!", message)
