@@ -63,7 +63,8 @@ year_now = int(now2[0])
 
 time_now2 = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
                           second=0, microsecond=0, tzinfo=None, fold=0)
-#print(time)
+
+print(time)
 print(time_now2)
 
 if (len(datex_p) or len(datex_t)) and len(timex) != 0:
@@ -90,7 +91,7 @@ localtime = difference_day
 time_d_float = difference_day.total_seconds()
 
 print(time_d_float) 
-#t.sleep(time_d_float)
+t.sleep(time_d_float)
 
 if len(datex_p) and len(timex) != 0:
     fragement = string1 + ' ' + 'в' + ' ' + string_time1
