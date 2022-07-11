@@ -5,7 +5,7 @@ dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'мину
 
 print(dictionary['минут'])
 spisok = ['через','2','часа']
-string = 'через 2 часа посрать'
+string = 'через 2 часа'
 s=[]
 for x in spisok:
     s.append(re.findall(x, string))
