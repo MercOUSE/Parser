@@ -140,7 +140,6 @@ while reminder == 1:
                     if len(datex_monthname) and len(timex) != 0:
                         fragement = string1 + ' ' + 'в' + ' ' + string_time1
                         message = text.replace(fragement, '')
-                        print(fragement)
                         if len(message) == len(text):
                             fragement = 'в' + ' ' + string_time1 + ' ' + string1
                             message = text.replace(fragement, '')
