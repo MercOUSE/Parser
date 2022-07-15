@@ -15,12 +15,15 @@ dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'мину
 i = -1
 j = -1
 reminder = 1
+
 cache_messages = []
 cache_time = []
-while reminder == 1:
-    print("О чём и когда напомнить Вам?")
 
+while reminder == 1:
+    
+    print("О чём и когда напомнить Вам?")
     text = str(input())
+    
     if len(text) > 0:
         notif = text + ' ' 
         datex_t = re.findall('[0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9]',notif)
@@ -28,9 +31,10 @@ while reminder == 1:
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
         skipping_time = re.findall('Через [0-9]+ часа+|Через [0-9]+ минуты+|Через [0-9]+ часов+|Через час+|Через [0-9]+ минут+|через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+ |Через [0-9]+ час+ |Через сутки+ |через сутки',notif)
-        skipping_days = re.findall('через [0-9]+ дня+ |через [0-9]+ день+ |через [0-9]+ дней+ |Через [0-9]+ дня+ |Через [0-9]+ день+ |Через [0-9]+ дней+ |Через день+ |через день,', notif)
+        skipping_days = re.findall('через [0-9]+ дня+ |через [0-9]+ день+ |через [0-9]+ дней+ |Через [0-9]+ дня+ |Через [0-9]+ день+ |Через [0-9]+ дней+ |Через день+ |через день', notif)
         how_are_you = re.findall('Как дела[?]|как дела[?]', notif)
         what_time_is_now = re.findall('Который час[?]|Сколько сейчас времени[?]|Время сейчас|Время в настоящий момент', notif)
+
         if len(what_time_is_now) != 0:
             print(datetime.datetime.now())
         elif len(how_are_you) != 0:
@@ -47,23 +51,26 @@ while reminder == 1:
                 MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                 print(MESSAGE)
             elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) > 0:
+                
                 if len(skipping_days) != 0:
                     s=[]
                     for x in skipping_days:
                         s.append(re.findall(x, notif))
-                    s1 = s[0]
-                    s2 = s1[0]
-                    s3 = s2.split()
-                    if len(s3) < 3:
+                        
+                    s_list = s[0]
+                    s_string = s_list[0]
+                    s_splitted = s_string.split()
+                    
+                    if len(s_splitted) < 3:
                         first_multiplier = 1
-                        key = s3[1]
+                        key = s_splitted[1]
                     else:
-                        first_multiplier = int(s3[1])
-                        key = s3[2]
+                        first_multiplier = int(s_splitted[1])
+                        key = s_splitted[2]
                     second_multiplier = dictionary[key]
                     time_sleep_interval = first_multiplier * second_multiplier
                     if time_sleep_interval > 0:
-                        message = notif.replace(s2,'')
+                        message = notif.replace(s_string,'')
                         seconds = t.time() + time_sleep_interval
                         result = t.localtime(seconds)
                         year_remind = result.tm_year
@@ -79,12 +86,12 @@ while reminder == 1:
                     
 
                 elif len(datex_monthname) != 0:
-                    string1 = datex_monthname[0]
-                    string2 = string1.split()
-                    month = string2[1]
-                    day_remind = int(string2[0])
+                    string_found = datex_monthname[0]
+                    string_list = string_found.split()
+                    month = string_list[1]
+                    day_remind = int(string_list[0])
                     month_remind = dictionary[month]
-                    year_remind = int(string2[2])
+                    year_remind = int(string_list[2])
                     if len(timex) != 0: 
                         string_time1 = timex[0]
                         time2 = string_time1.split(":")
@@ -92,38 +99,38 @@ while reminder == 1:
                                         second=0, microsecond=0, tzinfo=None, fold=0)
                         
                     now = str(date.today())
-                    now1 = now.split("-")
-                    now2 = now1
+                    now_splitted = now.split("-")
+                    now_list = now_splitted
 
                     current_date_time = datetime.datetime.now()
                     current_time = str(current_date_time.time())
                     time_now = current_time.split(":")
                     time_now[2] = 0
 
-                    day_now = int(now2[2])
-                    month_now = int(now2[1])
-                    year_now = int(now2[0])
+                    day_now = int(now_list[2])
+                    month_now = int(now_list[1])
+                    year_now = int(now_list[0])
 
-                    time_now2 = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
+                    time_now_list = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
                                             second=0, microsecond=0, tzinfo=None, fold=0)
 
                     if len(datex_monthname) and len(timex) != 0:
-                        aa = datetime.datetime(year_remind, month_remind, day_remind,
+                        first_factor = datetime.datetime(year_remind, month_remind, day_remind,
                                     int(time2[0]), int(time2[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now,
+                        second_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time_now[0]), int(time_now[1]), 0, 0)
                     elif len(timex) != 0:
-                        aa = datetime.datetime(year_now, month_now, day_now,
+                        first_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time2[0]), int(time2[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now,
+                        second_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time_now[0]), int(time_now[1]), 0, 0)
                     else: 
-                        aa = datetime.datetime(year_remind, month_remind, day_remind,
+                        first_factor = datetime.datetime(year_remind, month_remind, day_remind,
                                             int(time_now[0]), int(time_now[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now, 
+                        second_factor = datetime.datetime(year_now, month_now, day_now, 
                                             int(time_now[0]), int(time_now[1]), 0, 0)
                         
-                    difference_day = aa-bb
+                    difference_day = first_factor - second_factor
 
                     localtime = difference_day 
                     time_sleep_interval = difference_day.total_seconds()
@@ -142,37 +149,39 @@ while reminder == 1:
                         print(MESSAGE)
 
                     if len(datex_monthname) and len(timex) != 0:
-                        fragement = string1 + ' ' + 'в' + ' ' + string_time1
+                        fragement = string_found + ' ' + 'в' + ' ' + string_time1
                         message = text.replace(fragement, '')
                         if len(message) == len(text):
-                            fragement = 'в' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'в' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
     
                         if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
     
                     elif len(datex_monthname) != 0 and len(timex) == 0:
-                        fragement = string1
+                        fragement = string_found
                         message = notif.replace(fragement, '')
 
                 elif len(skipping_time) != 0:
                     s = []
                     for x in skipping_time:
                         s.append(re.findall(x, notif))
-                    s1 = s[0]
-                    s2 = s1[0]
-                    s3 = s2.split()
-                    if len(s3) < 3:
+                        
+                    s_list = s[0]
+                    s_string = s_list[0]
+                    s_splitted = s_string.split()
+                    
+                    if len(s_splitted) < 3:
                         first_multiplier = 1
-                        key = s3[1]
+                        key = s_splitted[1]
                     else:
-                        first_multiplier = int(s3[1])
-                        key = s3[2]
+                        first_multiplier = int(s_splitted[1])
+                        key = s_splitted[2]
                     second_multiplier = dictionary[key]
                     time_sleep_interval = first_multiplier * second_multiplier
                     if time_sleep_interval > 0:
-                        message = notif.replace(s2,'')
+                        message = notif.replace(s_string,'')
                         seconds = t.time() + time_sleep_interval
                         result = t.localtime(seconds)
                         year_remind = result.tm_year
@@ -189,19 +198,19 @@ while reminder == 1:
                 else:
                     if len(datex_p) or len(datex_t) != 0:
                         if len(datex_p) == 0:
-                            string1 = datex_t[0]
-                            string2 = string1.split("-")
-                            string3 = string2[::-1]
-                            day_remind = int(string3[2])
-                            month_remind = int(string3[1])
-                            year_remind = int(string3[0])
+                            string_found = datex_t[0]
+                            string_list = string_found.split("-")
+                            string_list_reversed = string_list[::-1]
+                            day_remind = int(string_list_reversed[2])
+                            month_remind = int(string_list_reversed[1])
+                            year_remind = int(string_list_reversed[0])
                         else: 
-                            string1 = datex_p[0]
-                            string2 = string1.split(".")
-                            string3 = string2[::-1]
-                            day_remind = int(string3[2])
-                            month_remind = int(string3[1])
-                            year_remind = int(string3[0])
+                            string_found = datex_p[0]
+                            string_list = string_found.split(".")
+                            string_list_reversed = string_list[::-1]
+                            day_remind = int(string_list_reversed[2])
+                            month_remind = int(string_list_reversed[1])
+                            year_remind = int(string_list_reversed[0])
                     if len(timex) != 0: 
                         string_time1 = timex[0]
                         time2 = string_time1.split(":")
@@ -209,39 +218,39 @@ while reminder == 1:
                                         second=0, microsecond=0, tzinfo=None, fold=0)
                         
                     now = str(date.today())
-                    now1 = now.split("-")
-                    now2 = now1
+                    now_splitted = now.split("-")
+                    now_list = now_splitted
 
                     current_date_time = datetime.datetime.now()
                     current_time = str(current_date_time.time())
                     time_now = current_time.split(":")
                     time_now[2] = 0
 
-                    day_now = int(now2[2])
-                    month_now = int(now2[1])
-                    year_now = int(now2[0])
+                    day_now = int(now_list[2])
+                    month_now = int(now_list[1])
+                    year_now = int(now_list[0])
 
-                    time_now2 = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
+                    time_now_list = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
                                             second=0, microsecond=0, tzinfo=None, fold=0)
 
 
                     if (len(datex_p) or len(datex_t)) and len(timex) != 0:
-                        aa = datetime.datetime(year_remind, month_remind, day_remind,
+                        first_factor = datetime.datetime(year_remind, month_remind, day_remind,
                                     int(time2[0]), int(time2[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now,
+                        second_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time_now[0]), int(time_now[1]), 0, 0)
                     elif len(timex) != 0:
-                        aa = datetime.datetime(year_now, month_now, day_now,
+                        first_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time2[0]), int(time2[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now,
+                        second_factor = datetime.datetime(year_now, month_now, day_now,
                                     int(time_now[0]), int(time_now[1]), 0, 0)
                     else: 
-                        aa = datetime.datetime(year_remind, month_remind, day_remind,
+                        first_factor = datetime.datetime(year_remind, month_remind, day_remind,
                                             int(time_now[0]), int(time_now[1]), 0, 0)
-                        bb = datetime.datetime(year_now, month_now, day_now, 
+                        second_factor = datetime.datetime(year_now, month_now, day_now, 
                                             int(time_now[0]), int(time_now[1]), 0, 0)
                         
-                    difference_day = aa-bb
+                    difference_day = first_factor - second_factor
 
                     localtime = difference_day 
                     time_sleep_interval = difference_day.total_seconds()
@@ -261,27 +270,27 @@ while reminder == 1:
 
 
                     if len(datex_p) and len(timex) != 0:
-                        fragement = string1 + ' ' + 'в' + ' ' + string_time1
+                        fragement = string_found + ' ' + 'в' + ' ' + string_time1
                         message = text.replace(fragement, '')
 
                         if len(message) == len(text):
-                            fragement = 'в' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'в' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
 
                         if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
 
                     elif len(datex_t) and len(timex) != 0:
-                        fragement = string1 + ' ' + 'в' + ' ' + string_time1
+                        fragement = string_found + ' ' + 'в' + ' ' + string_time1
                         message = text.replace(fragement, '')
                         
                         if len(message) == len(text):
-                            fragement = 'в' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'в' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
                             
                         if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string1
+                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
                             message = text.replace(fragement, '')
 
                     elif len(datex_t) == 0 and len(datex_p) == 0 and len(timex) != 0:
@@ -292,8 +301,9 @@ while reminder == 1:
                             message = text.replace(fragement, '')
 
                     elif (len(datex_p) or len(datex_t) != 0) and len(timex) == 0:
-                        fragement = string1
+                        fragement = string_found
                         message = text.replace(fragement, '')
+                        
                 if time_sleep_interval > 0:
                     MESSAGE={'STATUS': 'SUCCESS', 'DATE': {'year': year_remind, 'month': month_remind, 'day': day_remind, 'hour': hour_remind, 'minute': minute_remind}, 'TEXT': message}
                     print(MESSAGE)
@@ -302,8 +312,13 @@ while reminder == 1:
                     cache_messages.append(message)
                     j += 1
                     def time_sleep(i, j):
-                        t.sleep(cache_time[i])
-                        print("Напоминаю!", cache_messages[j])
+                        try:
+                            t.sleep(cache_time[i])
+                            print("Напоминаю!", cache_messages[j])
+                        except OverflowError:
+                            print("Слишком долго!")
+                            MESSAGE={'STATUS': 'ERROR', 'TEXT': OverflowError}
+                            print(MESSAGE)
                     th = Thread(target=time_sleep, args=(i, j))
                     th.start()
                     
