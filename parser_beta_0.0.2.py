@@ -9,7 +9,7 @@ import time as t
 dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'минут' : 60,
               'минуту' : 60, 'минуты' : 60, 'секунду' : 1, 'секунд' : 1,
               'полтора' : 1.5, 'день' : 86400, 'дней' : 86400, 'дня' : 86400,
-              'сутки' : 86400, 'января' : 1, 'февраля' : 2, 'марта' : 3,
+              'сутки' : 86400, 'завтра' : 86400, 'января' : 1, 'февраля' : 2, 'марта' : 3,
               'апреля' : 4, 'мая' : 5, 'июня' : 6, 'июля' : 7, 'августа' : 8,
               'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12}
 i = -1
@@ -25,16 +25,15 @@ while reminder == 1:
     text = str(input())
     
     if len(text) > 0:
-        notif = text + ' ' 
+        notif = text.lower() 
         datex_t = re.findall('[0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9]',notif)
         datex_p = re.findall('[0-9][0-9][.][0-9][0-9][.][0-9][0-9][0-9][0-9]',notif)
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
-        skipping_time = re.findall('Через [0-9]+ часа+|Через [0-9]+ минуты+|Через [0-9]+ часов+|Через час+|Через [0-9]+ минут+|через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+ |Через [0-9]+ час+ |Через сутки+ |через сутки',notif)
-        skipping_days = re.findall('через [0-9]+ дня+ |через [0-9]+ день+ |через [0-9]+ дней+ |Через [0-9]+ дня+ |Через [0-9]+ день+ |Через [0-9]+ дней+ |Через день+ |через день', notif)
-        how_are_you = re.findall('Как дела[?]|как дела[?]', notif)
-        what_time_is_now = re.findall('Который час[?]|Сколько сейчас времени[?]|Время сейчас|Время в настоящий момент', notif)
-
+        skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+ |через сутки',notif)
+        skipping_days = re.findall('через [0-9]+ дня+ |через [0-9]+ день+ |через [0-9]+ дней+ |через день+ |завтра', notif)
+        how_are_you = re.findall('как дела[?]', notif)
+        what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
         if len(what_time_is_now) != 0:
             print(datetime.datetime.now())
         elif len(how_are_you) != 0:
@@ -61,7 +60,10 @@ while reminder == 1:
                     s_string = s_list[0]
                     s_splitted = s_string.split()
                     
-                    if len(s_splitted) < 3:
+                    if len(s_splitted) == 1:
+                        first_multiplier = 1
+                        key = s_splitted[0]
+                    elif len(s_splitted) < 3:
                         first_multiplier = 1
                         key = s_splitted[1]
                     else:
@@ -150,14 +152,10 @@ while reminder == 1:
 
                     if len(datex_monthname) and len(timex) != 0:
                         fragement = string_found + ' ' + 'в' + ' ' + string_time1
-                        message = text.replace(fragement, '')
+                        message = notif.replace(fragement, '')
                         if len(message) == len(text):
                             fragement = 'в' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
-    
-                        if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
+                            message = notif.replace(fragement, '')
     
                     elif len(datex_monthname) != 0 and len(timex) == 0:
                         fragement = string_found
@@ -271,38 +269,28 @@ while reminder == 1:
 
                     if len(datex_p) and len(timex) != 0:
                         fragement = string_found + ' ' + 'в' + ' ' + string_time1
-                        message = text.replace(fragement, '')
+                        message = notif.replace(fragement, '')
 
                         if len(message) == len(text):
                             fragement = 'в' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
-
-                        if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
+                            message = notif.replace(fragement, '')
 
                     elif len(datex_t) and len(timex) != 0:
                         fragement = string_found + ' ' + 'в' + ' ' + string_time1
-                        message = text.replace(fragement, '')
+                        message = notif.replace(fragement, '')
                         
                         if len(message) == len(text):
                             fragement = 'в' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
-                            
-                        if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1 + ' ' + string_found
-                            message = text.replace(fragement, '')
+                            message = notif.replace(fragement, '')
 
                     elif len(datex_t) == 0 and len(datex_p) == 0 and len(timex) != 0:
                         fragement = 'в' + ' ' + string_time1
-                        message = text.replace(fragement, '')
-                        if len(message) == len(text):
-                            fragement = 'В' + ' ' + string_time1
-                            message = text.replace(fragement, '')
+                        message = notif.replace(fragement, '')
+
 
                     elif (len(datex_p) or len(datex_t) != 0) and len(timex) == 0:
                         fragement = string_found
-                        message = text.replace(fragement, '')
+                        message = notif.replace(fragement, '')
                         
                 if time_sleep_interval > 0:
                     MESSAGE={'STATUS': 'SUCCESS', 'DATE': {'year': year_remind, 'month': month_remind, 'day': day_remind, 'hour': hour_remind, 'minute': minute_remind}, 'TEXT': message}
