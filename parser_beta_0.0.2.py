@@ -90,6 +90,7 @@ while reminder == 1:
                 elif len(datex_monthname) != 0:
                     string_found = datex_monthname[0]
                     string_list = string_found.split()
+                    print(datex_monthname)
                     month = string_list[1]
                     day_remind = int(string_list[0])
                     month_remind = dictionary[month]
@@ -151,15 +152,19 @@ while reminder == 1:
                         print(MESSAGE)
 
                     if len(datex_monthname) and len(timex) != 0:
-                        fragement = string_found + ' ' + 'в' + ' ' + string_time1
+                        fragement = string_found + 'в' + ' ' + string_time1
                         message = notif.replace(fragement, '')
                         if len(message) == len(text):
                             fragement = 'в' + ' ' + string_time1 + ' ' + string_found
                             message = notif.replace(fragement, '')
+                            if len(message) == len(text):
+                                fragement = string_found + ' ' + 'в' + ' ' + string_time1
+                                message = notif.replace(fragement, '')
     
                     elif len(datex_monthname) != 0 and len(timex) == 0:
                         fragement = string_found
                         message = notif.replace(fragement, '')
+                    print(fragement)
 
                 elif len(skipping_time) != 0:
                     s = []
