@@ -34,7 +34,6 @@ while reminder == 1:
         skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю+|завтра', notif)
         how_are_you = re.findall('как дела[?]', notif)
         what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
-        print(skipping_days)
         if len(what_time_is_now) != 0:
             print(datetime.datetime.now())
         elif len(how_are_you) != 0:
@@ -71,8 +70,6 @@ while reminder == 1:
                         first_multiplier = int(s_splitted[1])
                         key = s_splitted[2]
                     second_multiplier = dictionary[key]
-                    print(second_multiplier)
-                    print(skipping_days)
                     time_sleep_interval = first_multiplier * second_multiplier
                     if time_sleep_interval > 0:
                         message = notif.replace(s_string,'')
