@@ -55,14 +55,18 @@ while reminder == 1:
             elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) or len(day_of_week) > 0:
                 
                 if len(day_of_week) != 0:
-                    day_of_week_str = day_of_week[0]
-                    key = dictionary[day_of_week_str]
+                    day_of_week_string = day_of_week[0]
+                    key = dictionary[day_of_week_string]
                     time_now = datetime.datetime.today()
                     day_now = time_now.weekday()
-                    num_of_days = key - day_now
-                    time_sleep_interval = num_of_days * 86400
+                    if key < day_now:
+                        num_of_days = 7 - day_now
+                        time_sleep_interval = num_of_days * 86400
+                    else: 
+                        num_of_days = key - day_now
+                        time_sleep_interval = num_of_days * 86400
                     if time_sleep_interval > 0:
-                        fragement = 'в' + ' ' + day_of_week_str
+                        fragement = 'в' + ' ' + day_of_week_string
                         message = notif.replace(fragement, '')
                         seconds = t.time() + time_sleep_interval
                         result = t.localtime(seconds)
@@ -76,7 +80,7 @@ while reminder == 1:
                         error_name = 'Неверно указано время'
                         MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                         print(MESSAGE)
-                    fragement = 'в' + ' ' + day_of_week_str
+                    fragement = 'в' + ' ' + day_of_week_string
                     message = notif.replace(fragement, '')
                     
                     
