@@ -11,7 +11,8 @@ dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'мину
               'полтора' : 1.5, 'день' : 86400, 'дней' : 86400, 'дня' : 86400,
               'сутки' : 86400, 'завтра' : 86400, 'января' : 1, 'февраля' : 2, 'марта' : 3,
               'апреля' : 4, 'мая' : 5, 'июня' : 6, 'июля' : 7, 'августа' : 8,
-              'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12, 'неделю' : 604800, 'недели' : 604800}
+              'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12, 'неделю' : 604800, 'недели' : 604800,
+              'понедельник' : 0, 'вторник' : 1, 'среду' : 2, 'четверг' : 3, 'пятницу' : 4, 'субботу' : 5, 'воскресенье' : 6}
 i = -1
 j = -1
 reminder = 1
@@ -33,7 +34,9 @@ while reminder == 1:
         skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+ |через сутки',notif)
         skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю+|завтра', notif)
         how_are_you = re.findall('как дела[?]', notif)
+        day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье',notif)
         what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
+        
         if len(what_time_is_now) != 0:
             print(datetime.datetime.now())
         elif len(how_are_you) != 0:
@@ -49,9 +52,36 @@ while reminder == 1:
                 error_name = 'Неверно указано время'
                 MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                 print(MESSAGE)
-            elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) > 0:
+            elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) or len(day_of_week) > 0:
                 
-                if len(skipping_days) != 0:
+                if len(day_of_week) != 0:
+                    day_of_week_str = day_of_week[0]
+                    key = dictionary[day_of_week_str]
+                    time_now = datetime.datetime.today()
+                    day_now = time_now.weekday()
+                    num_of_days = key - day_now
+                    time_sleep_interval = num_of_days * 86400
+                    if time_sleep_interval > 0:
+                        fragement = 'в' + ' ' + day_of_week_str
+                        message = notif.replace(fragement, '')
+                        seconds = t.time() + time_sleep_interval
+                        result = t.localtime(seconds)
+                        year_remind = result.tm_year
+                        month_remind = result.tm_mon
+                        day_remind = result.tm_mday
+                        hour_remind = result.tm_hour
+                        minute_remind = result.tm_min
+                    else:
+                        print("Ошибка! Неверно указано время")
+                        error_name = 'Неверно указано время'
+                        MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
+                        print(MESSAGE)
+                    fragement = 'в' + ' ' + day_of_week_str
+                    message = notif.replace(fragement, '')
+                    
+                    
+                    
+                elif len(skipping_days) != 0:
                     s=[]
                     for x in skipping_days:
                         s.append(re.findall(x, notif))
