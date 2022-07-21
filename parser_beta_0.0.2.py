@@ -467,6 +467,6 @@ while reminder == 1:
                 print(MESSAGE)
     else: 
         print("Ошибка! Ничего не введено.")
-        error_name = 'Неверно указано время'
+        error_name = 'Ничего не введено'
         MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
         print(MESSAGE)
