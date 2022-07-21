@@ -12,7 +12,7 @@ dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'мину
               'полтора' : 1.5, 'день' : 86400, 'дней' : 86400, 'дня' : 86400,
               'сутки' : 86400, 'завтра' : 86400, 'января' : 1, 'февраля' : 2, 'марта' : 3,
               'апреля' : 4, 'мая' : 5, 'июня' : 6, 'июля' : 7, 'августа' : 8,
-              'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12, 'неделю' : 604800, 'недели' : 604800,
+              'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12, 'неделю' : 604800, 'недели' : 604800, 'недель' : 604800, 'месяц' : 2678400,
               'понедельник' : 0, 'вторник' : 1, 'среду' : 2, 'четверг' : 3, 'пятницу' : 4, 'субботу' : 5, 'воскресенье' : 6}
 
 i = -1
@@ -34,9 +34,9 @@ while reminder == 1:
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
         skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+|через сутки',notif)
-        skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю', notif)
+        skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю+|через [0-9]+ недели+|через [0-9]+ недель+|через месяц', notif)
         how_are_you = re.findall('как дела[?]', notif)
-        day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье+|завтра',notif)
+        day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье+|завтра+|на неделе',notif)
         what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
         random_week_day = re.findall('на неделе', notif)
         
@@ -57,7 +57,7 @@ while reminder == 1:
                 print(MESSAGE)
                 
             elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) or len(day_of_week) or len(random_week_day) > 0:
-                if len(random_week_day) > 0:
+                if len(random_week_day) > 0 and len(timex) == 0:
                     time_now = datetime.datetime.today()
                     day = random.Random()
                     day = day.randint(1, 7 - time_now.weekday())
@@ -73,11 +73,19 @@ while reminder == 1:
                     minute_remind = result.tm_min
                     
                 elif len(day_of_week) != 0:
-                    day_of_week_string = day_of_week[0]
-                    key = dictionary[day_of_week_string]
+                    if len(random_week_day) == 0:
+                        day_of_week_string = day_of_week[0]
+                        key = dictionary[day_of_week_string]
                     time_now = datetime.datetime.today()
                     day_now = time_now.weekday()
-                    if key == dictionary['завтра']:
+                    if len(random_week_day) > 0 and len(timex) != 0:
+                        random_week_day_string = random_week_day[0]
+                        time_now = datetime.datetime.today()
+                        day = random.Random()
+                        day = day.randint(1, 7 - time_now.weekday())
+                        time_sleep_interval = day * 86400
+                    
+                    elif key == dictionary['завтра']:
                         time_sleep_interval = 86400
                     elif key == day_now:
                         time_sleep_interval = 604800
@@ -144,8 +152,13 @@ while reminder == 1:
                             day_remind = result.tm_mday
                             hour_remind = result.tm_hour
                             minute_remind = result.tm_min
-                            
-                            if len(day_of_week) and len(timex) != 0:
+                            if len(random_week_day) and len(timex) != 0:
+                                fragement = random_week_day_string + ' ' + 'в' + ' ' + string_time1
+                                message = notif.replace(fragement, '')
+                                if len(message) == len(text):
+                                    fragement = 'в' + ' ' + string_time1 + ' ' + random_week_day_string
+                                    message = notif.replace(fragement, '')
+                            elif len(day_of_week) and len(timex) != 0:
                                 fragement = 'в' + ' ' + day_of_week_string + ' ' + 'в' + ' ' + string_time1
                                 message = notif.replace(fragement, '')
                                 if len(message) == len(text):
