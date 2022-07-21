@@ -31,7 +31,7 @@ while reminder == 1:
         datex_p = re.findall('[0-9][0-9][.][0-9][0-9][.][0-9][0-9][0-9][0-9]',notif)
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
-        skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+ |через сутки',notif)
+        skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+|через сутки',notif)
         skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю+|завтра', notif)
         how_are_you = re.findall('как дела[?]', notif)
         day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье',notif)
@@ -59,8 +59,10 @@ while reminder == 1:
                     key = dictionary[day_of_week_string]
                     time_now = datetime.datetime.today()
                     day_now = time_now.weekday()
-                    if key < day_now:
-                        num_of_days = 7 - day_now
+                    if key == day_now:
+                        time_sleep_interval = 604800
+                    elif key < day_now:
+                        num_of_days = 7 - day_now + key
                         time_sleep_interval = num_of_days * 86400
                     else: 
                         num_of_days = key - day_now
@@ -68,6 +70,9 @@ while reminder == 1:
                     if time_sleep_interval > 0:
                         fragement = 'в' + ' ' + day_of_week_string
                         message = notif.replace(fragement, '')
+                        if len(notif) == len(message):
+                            fragement = 'во' + ' ' + day_of_week_string
+                            message = notif.replace(fragement, '')
                         seconds = t.time() + time_sleep_interval
                         result = t.localtime(seconds)
                         year_remind = result.tm_year
@@ -80,10 +85,6 @@ while reminder == 1:
                         error_name = 'Неверно указано время'
                         MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                         print(MESSAGE)
-                    fragement = 'в' + ' ' + day_of_week_string
-                    message = notif.replace(fragement, '')
-                    
-                    
                     
                 elif len(skipping_days) != 0:
                     s=[]
@@ -124,7 +125,6 @@ while reminder == 1:
                 elif len(datex_monthname) != 0:
                     string_found = datex_monthname[0]
                     string_list = string_found.split()
-                    print(datex_monthname)
                     month = string_list[1]
                     day_remind = int(string_list[0])
                     month_remind = dictionary[month]
@@ -198,7 +198,6 @@ while reminder == 1:
                     elif len(datex_monthname) != 0 and len(timex) == 0:
                         fragement = string_found
                         message = notif.replace(fragement, '')
-                    print(fragement)
 
                 elif len(skipping_time) != 0:
                     s = []
@@ -354,8 +353,8 @@ while reminder == 1:
                 error_name = 'Неверно указано время'
                 MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                 print(MESSAGE)
-        else: 
-            print("Ошибка! Ничего не введено.")
-            error_name = 'Неверно указано время'
-            MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
-            print(MESSAGE)
+    else: 
+        print("Ошибка! Ничего не введено.")
+        error_name = 'Ничего не введено'
+        MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
+        print(MESSAGE)
