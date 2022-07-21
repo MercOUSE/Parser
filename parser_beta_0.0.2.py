@@ -4,6 +4,7 @@ from threading import Thread
 import datetime
 import re
 import time as t
+import random
 
 
 dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'минут' : 60,
@@ -13,6 +14,7 @@ dictionary = {'час' : 3600, 'часа' : 3600, 'часов' : 3600, 'мину
               'апреля' : 4, 'мая' : 5, 'июня' : 6, 'июля' : 7, 'августа' : 8,
               'сентября' : 9, 'октября' : 10, 'ноября' : 11, 'декабря' : 12, 'неделю' : 604800, 'недели' : 604800,
               'понедельник' : 0, 'вторник' : 1, 'среду' : 2, 'четверг' : 3, 'пятницу' : 4, 'субботу' : 5, 'воскресенье' : 6}
+
 i = -1
 j = -1
 reminder = 1
@@ -27,7 +29,7 @@ while reminder == 1:
     
     if len(text) > 0:
         notif = text.lower() 
-        datex_t = re.findall('[0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9]',notif)
+        datex_t = re.findall('[0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9]',notif)    
         datex_p = re.findall('[0-9][0-9][.][0-9][0-9][.][0-9][0-9][0-9][0-9]',notif)
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
@@ -36,6 +38,7 @@ while reminder == 1:
         how_are_you = re.findall('как дела[?]', notif)
         day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье',notif)
         what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
+        random_week_day = re.findall('на неделе', notif)
         
         if len(what_time_is_now) != 0:
             print(datetime.datetime.now())
@@ -52,9 +55,24 @@ while reminder == 1:
                 error_name = 'Неверно указано время'
                 MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                 print(MESSAGE)
-            elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) or len(day_of_week) > 0:
                 
-                if len(day_of_week) != 0:
+            elif len(datex_t) or len(datex_p) or len(datex_monthname) or len(timex) or len(skipping_time) or len(skipping_days) or len(day_of_week) or len(random_week_day) > 0:
+                if len(random_week_day) > 0:
+                    time_now = datetime.datetime.today()
+                    day = random.Random()
+                    day = day.randint(1, 7 - time_now.weekday())
+                    time_sleep_interval = day * 86400
+                    fragement = random_week_day[0]
+                    message = notif.replace(fragement, '')
+                    seconds = t.time() + time_sleep_interval
+                    result = t.localtime(seconds)
+                    year_remind = result.tm_year
+                    month_remind = result.tm_mon
+                    day_remind = result.tm_mday
+                    hour_remind = result.tm_hour
+                    minute_remind = result.tm_min
+                    
+                elif len(day_of_week) != 0:
                     day_of_week_string = day_of_week[0]
                     key = dictionary[day_of_week_string]
                     time_now = datetime.datetime.today()
@@ -355,6 +373,6 @@ while reminder == 1:
                 print(MESSAGE)
     else: 
         print("Ошибка! Ничего не введено.")
-        error_name = 'Ничего не введено'
+        error_name = 'Неверно указано время'
         MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
         print(MESSAGE)
