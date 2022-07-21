@@ -34,9 +34,9 @@ while reminder == 1:
         datex_monthname = re.findall('[0-9]+ января [0-9][0-9][0-9][0-9] года+|[0-9]+ февраля [0-9][0-9][0-9][0-9] года+|[0-9]+ марта [0-9][0-9][0-9][0-9] года+|[0-9]+ апреля [0-9][0-9][0-9][0-9] года+|[0-9]+ мая [0-9][0-9][0-9][0-9] года+|[0-9]+ июня [0-9][0-9][0-9][0-9] года+|[0-9]+ июля [0-9][0-9][0-9][0-9] года+|[0-9]+ августа [0-9][0-9][0-9][0-9] года+|[0-9]+ сентября [0-9][0-9][0-9][0-9] года+|[0-9]+ октября [0-9][0-9][0-9][0-9] года+|[0-9]+ ноября [0-9][0-9][0-9][0-9] года+|[0-9]+ декабря [0-9][0-9][0-9][0-9] года+|[0-9]+ января [0-9][0-9][0-9][0-9]+ |[0-9]+ февраля [0-9][0-9][0-9][0-9]+ |[0-9]+ марта [0-9][0-9][0-9][0-9]+ |[0-9]+ апреля [0-9][0-9][0-9][0-9]+ |[0-9]+ мая [0-9][0-9][0-9][0-9]+ |[0-9]+ июня [0-9][0-9][0-9][0-9]+ |[0-9]+ июля [0-9][0-9][0-9][0-9]+ |[0-9]+ августа [0-9][0-9][0-9][0-9]+ |[0-9]+ сентября [0-9][0-9][0-9][0-9]+ |[0-9]+ октября [0-9][0-9][0-9][0-9]+ |[0-9]+ ноября [0-9][0-9][0-9][0-9]+ |[0-9]+ декабря [0-9][0-9][0-9][0-9]',notif)
         timex = re.findall('[0-9]+[:][0-5][0-9]', notif)
         skipping_time = re.findall('через [0-9]+ часа+|через [0-9]+ минуты+|через [0-9]+ минуту+|через [0-9]+ часов+|через [0-9]+ минут+|через час+|через минуту+|через [0-9]+ час+|через сутки',notif)
-        skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю+|завтра', notif)
+        skipping_days = re.findall('через [0-9]+ дня+|через [0-9]+ день+|через [0-9]+ дней+|через день+|через неделю', notif)
         how_are_you = re.findall('как дела[?]', notif)
-        day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье',notif)
+        day_of_week = re.findall('понедельник+|вторник+|среду+|четверг+|пятницу+|субботу+|воскресенье+|завтра',notif)
         what_time_is_now = re.findall('который час[?]|сколько сейчас времени[?]|время сейчас|время в настоящий момент', notif)
         random_week_day = re.findall('на неделе', notif)
         
@@ -77,7 +77,9 @@ while reminder == 1:
                     key = dictionary[day_of_week_string]
                     time_now = datetime.datetime.today()
                     day_now = time_now.weekday()
-                    if key == day_now:
+                    if key == dictionary['завтра']:
+                        time_sleep_interval = 86400
+                    elif key == day_now:
                         time_sleep_interval = 604800
                     elif key < day_now:
                         num_of_days = 7 - day_now + key
@@ -86,11 +88,6 @@ while reminder == 1:
                         num_of_days = key - day_now
                         time_sleep_interval = num_of_days * 86400
                     if time_sleep_interval > 0:
-                        fragement = 'в' + ' ' + day_of_week_string
-                        message = notif.replace(fragement, '')
-                        if len(notif) == len(message):
-                            fragement = 'во' + ' ' + day_of_week_string
-                            message = notif.replace(fragement, '')
                         seconds = t.time() + time_sleep_interval
                         result = t.localtime(seconds)
                         year_remind = result.tm_year
@@ -98,6 +95,90 @@ while reminder == 1:
                         day_remind = result.tm_mday
                         hour_remind = result.tm_hour
                         minute_remind = result.tm_min
+                        if len(timex) != 0: 
+                            string_time1 = timex[0]
+                            time2 = string_time1.split(":")
+                            time = datetime.time(hour=int(time2[0]), minute=int(time2[1]),
+                                            second=0, microsecond=0, tzinfo=None, fold=0)
+                            
+                            now = str(date.today())
+                            now_splitted = now.split("-")
+                            now_list = now_splitted
+
+                            current_date_time = datetime.datetime.now()
+                            current_time = str(current_date_time.time())
+                            time_now = current_time.split(":")
+                            time_now[2] = 0
+
+                            day_now = int(now_list[2])
+                            month_now = int(now_list[1])
+                            year_now = int(now_list[0])
+
+                            time_now_list = datetime.time(hour=int(time_now[0]), minute=int(time_now[1]),
+                                                    second=0, microsecond=0, tzinfo=None, fold=0)
+
+                            if len(day_of_week) and len(timex) != 0:
+                                first_factor = datetime.datetime(year_remind, month_remind, day_remind,
+                                            int(time2[0]), int(time2[1]), 0, 0)
+                                second_factor = datetime.datetime(year_now, month_now, day_now,
+                                            int(time_now[0]), int(time_now[1]), 0, 0)
+                            elif len(timex) != 0:
+                                first_factor = datetime.datetime(year_now, month_now, day_now,
+                                            int(time2[0]), int(time2[1]), 0, 0)
+                                second_factor = datetime.datetime(year_now, month_now, day_now,
+                                            int(time_now[0]), int(time_now[1]), 0, 0)
+                            else: 
+                                first_factor = datetime.datetime(year_remind, month_remind, day_remind,
+                                                    int(time_now[0]), int(time_now[1]), 0, 0)
+                                second_factor = datetime.datetime(year_now, month_now, day_now, 
+                                                    int(time_now[0]), int(time_now[1]), 0, 0)
+                                
+                            difference_day = first_factor - second_factor
+
+                            localtime = difference_day 
+                            time_sleep_interval = difference_day.total_seconds()
+                            seconds = t.time() + time_sleep_interval
+                            result = t.localtime(seconds)
+                            year_remind = result.tm_year
+                            month_remind = result.tm_mon
+                            day_remind = result.tm_mday
+                            hour_remind = result.tm_hour
+                            minute_remind = result.tm_min
+                            
+                            if len(day_of_week) and len(timex) != 0:
+                                fragement = 'в' + ' ' + day_of_week_string + ' ' + 'в' + ' ' + string_time1
+                                message = notif.replace(fragement, '')
+                                if len(message) == len(text):
+                                    fragement = 'в' + ' ' + string_time1 + ' ' + 'в' + ' ' + day_of_week_string
+                                    message = notif.replace(fragement, '')
+                                    if len(message) == len(text):
+                                        fragement = 'в' + day_of_week_string + ' ' + 'в' + ' ' + string_time1
+                                        message = notif.replace(fragement, '')
+                                        if len(message) == len(text):
+                                            fragement = 'в' + ' ' + day_of_week_string + 'в' + string_time1
+                                            message = notif.replace(fragement, '')
+                                            if len(message) == len(text):
+                                                fragement = 'во' + ' ' + day_of_week_string + ' ' + 'в' + ' ' + string_time1
+                                                message = notif.replace(fragement, '')
+                                                if len(message) == len(text):
+                                                    fragement = 'в' + ' ' + string_time1 + ' ' + 'во' + ' ' + day_of_week_string
+                                                    message = notif.replace(fragement, '')
+                                                    if len(message) == len(text):
+                                                        fragement = day_of_week_string + ' ' + 'в' + ' ' + string_time1
+                                                        message = notif.replace(fragement, '')
+                                                        if len(message) == len(text):
+                                                            fragement = 'в' + ' ' + string_time1 + ' ' + day_of_week_string
+                                                            message = notif.replace(fragement, '')
+                                                    
+                        elif len(timex) == 0:
+                            fragement = 'в' + ' ' + day_of_week_string
+                            message = notif.replace(fragement, '')
+                            if len(notif) == len(message):
+                                fragement = 'во' + ' ' + day_of_week_string
+                                message = notif.replace(fragement, '')
+                                if len(notif) == len(message):
+                                    fragement = day_of_week_string
+                                    message = notif.replace(fragement, '')
                     else:
                         print("Ошибка! Неверно указано время")
                         error_name = 'Неверно указано время'
@@ -371,8 +452,8 @@ while reminder == 1:
                 error_name = 'Неверно указано время'
                 MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
                 print(MESSAGE)
-    else: 
-        print("Ошибка! Ничего не введено.")
-        error_name = 'Неверно указано время'
-        MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
-        print(MESSAGE)
+        else: 
+            print("Ошибка! Ничего не введено.")
+            error_name = 'Неверно указано время'
+            MESSAGE={'STATUS': 'ERROR', 'TEXT': error_name}
+            print(MESSAGE)
